@@ -1,0 +1,27 @@
+#selectionMenu {
+  float: right;
+  display: block;
+  overflow: auto;
+  width:25vw;
+  margin-right: 10px;
+}
+
+#map {
+  width: 100vw;
+  height: 100vw;
+  background-color: rgb(30, 67, 134);
+}
+
+#dayPlanner {
+  float: right;
+  display: block;
+  overflow: auto;
+  width:25vw;
+  clear:right;
+  margin-right: 10px;
+}
+
+#navbar {
+  display: block;
+  width: 100vw;
+}

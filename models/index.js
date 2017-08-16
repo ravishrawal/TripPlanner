@@ -1,16 +1,21 @@
-const Sequelize = require('sequelize');
+const conn = require('./db');
 
-const conn = new Sequelize(process.env.DATABASE_URL);
+const Place = require('./place.js');
+const Restaurant = require('./restaurant.js');
+const Hotel = require('./hotel.js');
+const Activity = require('./activity.js');
 
-const Foo = conn.define('foo', {});
+//ASSOCIATIONS
+Hotel.belongsTo(Place);
+Activity.belongsTo(Place);
+Restaurant.belongsTo(Place);
 
+//SYNC & SEED
 const sync = ()=> {
   return conn.sync({ force: true });
 };
 
-module.exports = {
-  sync,
-  models: {
-    Foo
-  }
-}
+
+
+// EXPORTS
+module.exports = conn;

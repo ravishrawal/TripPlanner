@@ -1,18 +1,43 @@
+'use strict'
+const Place = require('./models/place.js');
+const Restaurant = require('./models/restaurant.js');
+const Hotel = require('./models/hotel.js');
+const Activity = require('./models/activity.js');
+
 const express = require('express');
 const path = require('path');
-const swig = require('swig');
-swig.setDefaults({ cache: false });
 const models = require('./models');
+const morgan = require('morgan');
+const nunjucks = require('nunjucks');
 
 const app = express();
-app.set('view engine', 'html');
-app.engine('html', swig.renderFile);
 
+// point nunjucks to the directory containing templates and turn off caching; configure returns an Environment
+// instance, which we'll want to use to add Markdown support later.
+const env = nunjucks.configure('views', { noCache: true });
+// have res.render work with html files
+app.set('view engine', 'html');
+// when res.render works with html files, have it use nunjucks to do so
+app.engine('html', nunjucks.render);
+
+app.use(morgan('dev'));
 app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use('/vendor', express.static(path.join(__dirname, 'node_modules')));
+app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules/bootstrap/dist'))); //client-side front-end dependencies
+app.use('/jquery', express.static(path.join(__dirname, 'node_modules/jquery/dist')));
 
 
 app.get('/', (req, res, next)=> {
-  res.render('index');
+  Promise.all([
+    Hotel.findAll(),
+    Restaurant.findAll(),
+    Activity.findAll()
+  ])
+    .then((result)=>{
+      console.log('RESULT HERE', result)
+      res.render('index', {hotels: result[0], restaurants: result[1], activities: result[2]});
+    })
+    .catch(next)
 });
 
 app.use((req, res, next)=> {
